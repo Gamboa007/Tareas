@@ -1,0 +1,238 @@
+import random
+
+class Vehicle:
+
+    speed_limit =50   # Limite de velocidad para todos los vehiculos micro-mobilidad
+
+    def __init__(self):          # Método constructor. No es necesario pasar argumentos. Cuando se crea
+        self.status = 'Block'    # una instancia del objeto Vehicle
+        self.current_speed = 0
+
+    def set_status(self, stat):  # Método status que seteará este atributo a: block, unlocked o in-ride
+        self.status = stat       # Dicho valor se pasará a través del argumento "stat"
+
+    def set_speed(self, speed):  # Metodo para setear la velocidad del objeto ya sea bicicleta o scooter
+        self.current_speed = speed # Se recibe argumento (velocidad) y se asigna a variable current_speed
+
+    def get_status(self):  # Metodo para obtener el estado actual del vehiculo : unblock, block o in-ride
+        print('Status:', self.status)
+
+    def get_speed(self): # Metodo para obtener la velocidad instantanea del vehiculos 
+        print('Speed:', self.current_speed)
+
+
+class Scooter(Vehicle):
+
+    def __init__(self):  # Método constructor de clase scooter todos los scooter nacen con bateria 100
+        super().__init__()
+        self.battery = 100
+
+    def get_battery(self):
+        print('Battery', self.battery)
+
+    def set_battery(self, value):
+        self.battery = value
+
+    def turn_on(self):
+        if (self.battery > 16):
+            self.set_satus('unblock')
+
+    def recharge(self):
+        self.battery = 100
+
+    def block(self):
+        self.set_status('Block')
+        self.current_speed = 0
+        self.battery = self.battery - 17
+
+    def unblock(self):
+        if self.battery <= 16:
+            self.set_status('Block')
+            print("Bateria demasiado baja para operar")
+        else:
+            self.set_status('Unblock')
+
+    def speed_up(self):
+        number = random.SystemRandom().randint(0, 100)
+        print("Velocidad actual:", number)
+
+        if number > self.speed_limit:
+            print("Velocidad máxima 50km/h !!!!!!!!")
+            self.set_speed(50)
+            self.set_status('In-Ride')
+        elif number >= 1 or number <= 50:
+            self.set_status('In-Ride')
+            self.set_speed(number)
+        else:
+            self.set_status('Unblock')
+
+'''scoot = Scooter()
+print('Se crea el scooter:', scoot)
+scoot.get_battery()
+scoot.get_status()
+scoot.get_speed()
+print('************************')
+print('Usuario 1 desbloque el scooter:')
+scoot.unblock()
+scoot.get_battery()
+scoot.get_status()
+scoot.get_speed()
+print('************************')
+print('Usuario 1 pisa el acelerador:')
+scoot.speed_up()
+scoot.get_battery()
+scoot.get_status()
+scoot.get_speed()
+print('************************')
+print('Usuario 1 Termina servicio: Se bloquea scooter')
+scoot.block()
+scoot.get_battery()
+scoot.get_status()
+scoot.get_speed()
+print('************************')
+print('Usuario 2 desbloque el scooter:')
+scoot.unblock()
+scoot.get_battery()
+scoot.get_status()
+scoot.get_speed()
+print('************************')
+print('Usuario 2 pisa el acelerador:')
+scoot.speed_up()
+scoot.get_battery()
+scoot.get_status()
+scoot.get_speed()
+print('************************')
+print('Usuario 2 Termina servicio: Se bloquea scooter')
+scoot.block()
+scoot.get_battery()
+scoot.get_status()
+scoot.get_speed()
+print('************************')
+print('Se setea bateria a 10 de forma manual')
+scoot.set_battery(10)
+scoot.get_battery()
+scoot.get_status()
+scoot.get_speed()
+print('************************')
+print('Usuario 3 intenta desbloquear con Batt insuficiente')
+scoot.unblock()
+scoot.get_battery()
+scoot.get_status()
+scoot.get_speed()
+print('************************')
+print('Se hace una recarga de bateria')
+scoot.recharge()
+scoot.get_battery()
+scoot.get_status()
+scoot.get_speed()
+print('************************')
+print('Usuario 3 intenta nuevamente desbloquear')
+scoot.unblock()
+scoot.get_battery()
+scoot.get_status()
+scoot.get_speed()
+print('************************')
+print('Usuario 3 pisa el acelerador:')
+scoot.speed_up()
+scoot.get_battery()
+scoot.get_status()
+scoot.get_speed()
+print('************************')
+print('Usuario 3 Termina servicio: Se bloque scooter')
+scoot.block()
+scoot.get_battery()
+scoot.get_status()
+scoot.get_speed()
+'''
+
+class Byke(Vehicle):
+    def __init__(self):
+        super().__init__()
+        self.maintenance = False
+
+    def set_maintenance(self,status):
+        self.maintenance = status
+
+    def get_maintenance(self):
+        print('Mantenimiento:', self.maintenance)
+
+    def unblock(self):
+        if self.maintenance == False:
+            self.set_status('Unblock')
+        else:
+            self.set_status('Block')
+            print("No Disponible: Mantenimiento Requerido")
+
+    def block(self):
+        if self.maintenance == False:
+            self.set_status('Block')
+            self.set_speed(0)
+
+    def speed_up(self):
+        number = random.SystemRandom().randint(0, 100)
+        print("Velocidad actual:", number)
+        if number > self.speed_limit:
+            print("Velocidad máxima 50km/h !!!!!!!!!!!!")
+            self.set_speed(50)
+            self.set_status('In-Ride')
+        elif number >= 1 or number <= 50:
+            self.set_status('In-Ride')
+            self.set_speed(number)
+        else:
+            self.set_status('Unblock')
+
+    def repair(self):
+        self.set_maintenance(False)
+
+'''bike1 = Byke()
+print('Se crea el Bicicleta:', bike1)
+bike1.get_status()
+bike1.get_speed()
+bike1.get_maintenance()
+print("**********************")
+print('Usuario 1 desbloquea la Bicicleta')
+bike1.unblock()
+bike1.get_status()
+bike1.get_speed()
+bike1.get_maintenance()
+print("**********************")
+print('Usuario 1 se pone en marcha')
+bike1.speed_up()
+bike1.get_status()
+bike1.get_speed()
+bike1.get_maintenance()
+print("**********************")
+print('Usuario 1 bloquea la bicicleta por fin de servicio')
+bike1.block()
+bike1.get_status()
+bike1.get_speed()
+bike1.get_maintenance()
+print("**********************")
+print('Indicador de mantenimiento se activa')
+bike1.set_maintenance(True)
+bike1.get_status()
+bike1.get_speed()
+bike1.get_maintenance()
+print("**********************")
+print('Usuario 2 intenta activar la bicicleta bloqueada')
+bike1.unblock()
+bike1.get_status()
+bike1.get_speed()
+bike1.get_maintenance()
+print("**********************")
+print('Se da mantenimiento a Bicicleta')
+bike1.repair()
+bike1.get_status()
+bike1.get_speed()
+bike1.get_maintenance()
+print("**********************")
+print('Usuario 3 intenta activar la bicicleta bloqueada')
+bike1.unblock()
+bike1.get_status()
+bike1.get_speed()
+bike1.get_maintenance()
+print('Usuario 3 se pone en marcha')
+bike1.speed_up()
+bike1.get_status()
+bike1.get_speed()
+bike1.get_maintenance()'''
