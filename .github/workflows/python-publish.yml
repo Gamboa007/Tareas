@@ -1,7 +1,7 @@
 import random
 
 class Vehicle:
-
+ 
     speed_limit =50   # Limite de velocidad para todos los vehiculos micro-mobilidad
 
     def __init__(self):          # Método constructor. No es necesario pasar argumentos. Cuando se crea
