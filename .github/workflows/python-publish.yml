@@ -1,3 +1,21 @@
+'''
+Comentarios:
+1- me parece una excelente práctica que comentes tu código, nunca dejes de hacerlo. Solo te recomendaría que trates de hacerlo en inglés y solo las partes que puedan
+resultar no tan obvias.
+2- los métodos getters, por lo general devuelven el valor de la propiedad a la cual hacen referencia, por ejemplo:
+    def get_status(self):
+        print('Status:', self.status)
+        return self.status
+3- me pareció muy buena solución que asignaras un número aleatorio para la velocidad, te felicito por buscar alternativas más allá de lo visto en clase.
+4- la validación que haces para no asignar un valor más grande de velocidad que el permitido es lo correcto, sin embargo podrías haber mitigado esa opción con la 
+   siguente línea: number = random.SystemRandom().randint(0, self.speed_limit) en vez de: number = random.SystemRandom().randint(0, 100).
+5- veo que solo te falto el tema de hacer un contador (automático) para el número seguido de viajes en bicicleta para pasar el maintenance a True.
+6- En general, te felicito por el trabajo hecho!
+
+'''
+
+
+
 import random
 
 class Vehicle:
