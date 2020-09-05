@@ -1,0 +1,246 @@
+import random
+
+class Vehicle:
+
+    speed_limit =50   # Limite de velocidad para todos los vehiculos micro-mobilidad
+
+    def __init__(self):          # Método constructor. No es necesario pasar argumentos. Cuando se crea
+        self.status = 'Block'    # una instancia del objeto Vehicle
+        self.current_speed = 0
+
+    def set_status(self, stat):  # Método status que seteará este atributo a: block, unlocked o in-ride
+        self.status = stat       # Dicho valor se pasará a través del argumento "stat"
+
+    def set_speed(self, speed):  # Metodo para setear la velocidad del objeto ya sea bicicleta o scooter
+        self.current_speed = speed # Se recibe argumento (velocidad) y se asigna a variable current_speed
+
+    def get_status(self):  # Metodo para obtener el estado actual del vehiculo : unblock, block o in-ride
+        print('Status:', self.status)
+
+    def get_speed(self): # Metodo para obtener la velocidad instantanea del vehiculos
+        print('Speed:', self.current_speed)
+
+# '''
+class Scooter(Vehicle):
+
+    def __init__(self):  # Método constructor de clase scooter todos los scooter nacen con bateria 100
+        super().__init__()
+        self.battery = 100
+        self.need_charge = False
+
+    def get_battery(self):
+        print('Battery', self.battery)
+
+    def set_battery(self, value):
+        self.battery = value                   # probar prpbaer cuando se baja la bateria de forma manual con los demas estados
+        if self.battery <= 15:
+            self.need_charge = True
+
+    def unblock(self):                                         # Método que se ejecuta cuando el usuario trata de desbloquear mediante APP
+        if self.battery >= 16 and self.need_charge == False: # Si la bateria es mayor o 16% el siguiente estado del scooter deber ser unlock
+            self.set_status('Unblock')
+        else:                                                  # En caso de que no se cumplan ambas condiciones no hay condiciones de uso (desbloqueo)
+            print('No hay condiciones de manejo !!!')
+
+    def recharge(self):                                       # Método que recarga la bateria. Solo es aplicable si el scooter está en almacén
+        if self.status == 'In-WareHouse' and self.need_charge == True:
+            self.battery = 100
+            self.need_charge = False                        # Atributo need_charge cambia a False
+            print('Bateria cargada al 100%')
+        else:
+            print('Solo se permite carga en WareHouse')      # De no cumplirse las condiciones de estad y atributo need_charge, no hay carga y se bloquea
+            self.set_status('Block')
+
+    def block(self):
+     if self.battery >= 16:
+           if self.current_speed<= 0 and self.status=='In-Ride':
+               self.set_status('Block')
+               self.current_speed = 0
+               self.battery = self.battery - 17
+               print('Vehiculo Bloqueado')
+           elif self.current_speed == 0 and self.status=='Unblock':
+               self.set_status('Block')
+               print('Vehiculo Bloqueado ')
+           elif self.current_speed > 0 and self.status == 'In-Ride':
+               self.need_charge = True
+               print('Favor de detener el vehiculo')
+     else:
+        self.need_charge = True
+        print('Vehiculo Bloqueado')
+
+    def scanned(self):                                            # Metodo que se emplea cuando personal de la empresa
+        if self.status == 'Block' and self.need_charge == True:   # si el equipo esta bloqueado y el atributo need_charge es verdadero, se requiere lleva a almacén
+            self.set_status('In-transit')                         # Se coloca el vehiculo en estado transit
+            print('En transito hacia el almacen')
+
+        elif self.status == 'In-WareHouse' and self.need_charge == False:    # Si el vehiculo esta en warehouse y el atributo need_charge es falso,
+            self.set_status('Deploying')                                     # Esto indica que ya fue cargado y listo para poner en calle
+            print('Vehiculo listo para uso !!!')
+
+        elif self.status == 'Deploying':                                     # Si estaba en Deploying (rumbo a calle) entonces ahora se pone en la calle
+            self.set_status('Block')                                         # A Disposicion de los usuarios
+            print('Vehiculo disponible para uso')
+
+        elif self.status == 'Block' and self.need_charge == False:
+            self.set_status('Block')
+            print('Equipo Cargado. No se necesita Carga')
+
+        elif self.status == 'In-transit' and self.need_charge == True:
+             self.set_status('In-WareHouse')
+             print('Equipo Se encuentra en almacén')
+
+        else:
+            print('No estado valido')                     # Cualquier otra caso es inválido y se bloquea el vehiculo
+            self.set_status('Block')
+
+    def warehouse(self):                                  # Método que se invoca cuando el vehiculo llega a Bodega
+        self.set_status('In-WareHouse')
+
+    def speed_up(self):                                   # Método que genera un número aleatorio para simular el giro de acelarador
+        number = random.SystemRandom().randint(0, 100)    # El rango del random es 0 (son acelerador) y 100 (velocidad maxima del scooter)
+        print("Velocidad actual:", number)
+
+        if number > self.speed_limit:                    # Si el numero aleatorio es mayor a la velocidad maxima, setea la velocidad a 50
+            self.set_status('In-Ride')                   # Automaticamente al entrar a esta condición el vehiculo está en in-ride
+            print("Velocidad máxima 50km/h !!!!!!!!")    # Mensaje de que no se puede pasar de 50 km/H
+            self.set_speed(50)                           # Se setea la velocidad al máximo
+        elif number >= 1 or number <= 50:                # En caso de que la velocidad simulada este entre el rango permitido:
+            self.set_status('In-Ride')                   # El vehiculo se pone en estado In-ride
+            self.set_speed(number)                       # Se setea la current_speed a la velocidad del número aleatorio
+        else:                                            # En otro caso es seguro que la velocidad no pase de 0 y continua en estado Unblock
+            self.set_status('Unblock')
+
+# Cadena de eventos para validación
+patin = Scooter()
+#'''
+#'''
+class Byke(Vehicle):
+    def __init__(self):
+        super().__init__()
+        self.maintenance = False
+        self.contador = 0
+
+    def set_maintenance(self,status):
+        self.maintenance = status
+
+    def set_contador(self, cont):
+        self.contador = cont
+        if self.contador >= 3:
+            self.set_status('Block')
+            self.set_maintenance(True)
+        else:
+            pass
+
+    def get_contador(self):
+        print('Contador:',self.contador)
+
+    def get_maintenance(self):
+        print('Mantenimiento:', self.maintenance)
+
+    def unblock(self):
+        if self.maintenance == False:
+            self.set_status('Unblock')
+        elif self.maintenance == True:
+            self.set_status('Block')
+            print("No Disponible: Mantenimiento Requerido")
+
+    def block(self):
+        if self.current_speed == 0 and self.status=='In-Ride':
+            self.set_status('Block')
+            self.contador = self.contador + 1
+            self.set_speed(0)
+            print('Vehiculo bloqueado')
+            if self.contador >= 3:
+                   self.maintenance = True
+            else:
+                   pass
+        elif self.current_speed == 0 and self.status=='Unblock':
+             self.set_status('Block')
+             self.set_speed(0)
+             print('Vehiculo bloqueado')
+        else:
+            print('Favor de detener el vehiculo')
+
+    def speed_up(self):
+      if self.status == 'Unblock': 
+            number = random.SystemRandom().randint(0, 100)
+            print("Velocidad actual:", number)
+            if number > self.speed_limit:
+                self.set_status('In-Ride')
+                print("Velocidad máxima 50km/h !!!!!!!!!!!!")
+                self.set_speed(50)
+            elif number >= 1 or number <= 50:
+                self.set_status('In-Ride')
+                self.set_speed(number)
+            else:
+                self.set_status('Unblock')
+      else:
+            print('Estado inválido')
+            self.set_status('Block')
+
+    def repair(self):                                                    # Metodo para dar mantenimiento a las bicicletas
+        if self.maintenance == True and self.status =='In-WareHouse':
+            self.set_maintenance(False)
+        else:
+            print('Solo se permite cargar en almacén')
+
+    def scan(self):
+        if self.maintenance == True and self.status == 'Block':
+            self.set_status('In-Transit')
+            print('El vehiculo está en tránsito a almacén')
+        elif self.maintenance== False:
+            print('No se requiere mantenimiento')
+        elif self.maintenance == True and self.status == 'In-Transit':
+            self.set_status('In-WareHouse')
+            print('El vehiculo está en tránsito a almacén')
+        elif self.maintenance == True and self.status == 'In-WareHouse':
+            self.set_status('Deploy')
+            self.set_maintenance(False)
+            self.set_contador(0)
+            print('El vehiculo está listo para uso')
+        elif self.maintenance == False and self.status == 'Deploy':
+            self.set_status('Block')
+            print('El vehiculo está en calle')
+        else:
+            self.set_status('Block')
+            print('Estado no válido. Vehiculo Bloqueado')
+
+#bici = Byke()
+#'''
+
+class ScooterMixin(Scooter):
+
+        def get_battery(self):
+            super().get_battery()
+            print('Battery', self.battery)
+
+        def set_battery(self):
+            super().set_battery(value)
+
+        def recharge(self):  # Método que recarga la bateria. Solo es aplicable si el scooter está en almacén
+           super().set_battery(100)
+
+
+
+class BykeMixin(Byke):
+
+    def set_maintenance(self):
+        super().set_maintenance()
+        self.maintenance = status
+
+    def set_contador(self):
+        self.contador = cont
+
+    def get_contador(self):
+        print('Contador:', self.contador)
+
+    def get_maintenance(self):
+        print('Mantenimiento:', self.maintenance)
+
+
+class ElectricByke(ScooterMixin, BykeMixin, Vehicle):
+    def __init__(self):
+        super().__init__()
+
+EB = ElectricByke()
+EB.set_status('Block')
